@@ -232,14 +232,40 @@
       font-family: inherit;
       font-size: 14px;
     }
+
+    /* required asterisks */
+    .req{
+      color: var(--danger);
+      font-weight: 700;
+    }
+    .modal-content label .req{
+      font-size: 11px;
+      vertical-align: super;
+      line-height: 0;
+      margin-left: 4px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .req-note .req{
+      vertical-align: baseline;
+      line-height: inherit;
+      font-size: inherit;
+      margin-left: 0;
+    }
+
     .checkbox { font-size: 13px; margin-bottom: 10px; color: var(--text-muted); }
     .checkbox label{
       display:flex;
-      align-items:flex-start;
+      align-items:center;
       gap:10px;
       cursor:pointer;
       user-select:none;
       line-height:1.35;
+    }
+    .checkbox label > span{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
     }
     /* required asterisk for checkbox labels (keeps it inline at the end) */
     .checkbox .req{
@@ -253,25 +279,30 @@
       white-space: nowrap;
     }
     .checkbox input[type="checkbox"]{
-      margin: 2px 0 0 0;
+      margin: 0;
       width: 18px;
       height: 18px;
       flex: 0 0 18px;
       accent-color: var(--accent);
     }
-    .modal-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: flex-start;
-      width: 100%;
-      margin-top: 14px;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: #fff;
-    }
+    .modal-actions{
+  /* Buttons block: align with input edges, no visible frame */
+  background: transparent;
+  padding: 0;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.modal-actions .button{
+  min-width: 140px;
+}
     .status { margin-top: 10px; font-size: 13px; }
     .status.err { color: var(--danger); }
     .status.ok { color: var(--ok); }
@@ -322,7 +353,7 @@
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 
-  margin: 24px auto;
+  margin: 0 auto;
 }
 
 @supports (padding: env(safe-area-inset-top)) {
@@ -338,11 +369,11 @@
 }
 
 .modal-actions{
-  /* Action bar lives INSIDE modal frame (no sticky to avoid overflow artifacts) */
-  background: #fff;
-  padding: 12px 14px;
+  /* Buttons block: align with input edges, no visible frame */
+  background: transparent;
+  padding: 0;
   margin-top: 14px;
-  border: 1px solid var(--border);
+  border: 0;
   border-radius: 14px;
 
   display: flex;
@@ -350,6 +381,10 @@
   justify-content: flex-start;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.modal-actions .button{
+  min-width: 140px;
 }
 
 /* === Posts grid: centered & square cards on desktop === */
@@ -442,10 +477,10 @@
 }
 
 .captcha-box{
-  border: 1px solid var(--border);
+  border: 0;
   border-radius: 14px;
-  padding: 10px;
-  background: #fff;
+  padding: 0;
+  background: transparent;
   max-width: 100%;
   overflow: hidden;
 }
@@ -595,11 +630,6 @@
       <textarea id="message" required rows="4" placeholder="Опишите ситуацию / чем помочь"></textarea>
     </div>
 
-    <div id="offerDetailsFields" style="display:none;">
-      <label for="offerDetails">Детали (опционально)</label>
-      <input id="offerDetails" type="text" placeholder="Например: готов помочь с покупкой лекарств / доставкой / консультацией">
-    </div>
-
     <!-- Help request fields (shown depending on form type) -->
     <div id="helpFields" style="display:none;">
       <label for="needAmount">Сумма (если известна)</label>
@@ -684,9 +714,7 @@
     // Toggle fieldsets
     document.getElementById("helpFields").style.display = isOffer ? "none" : "block";
     document.getElementById("offerTypeFields").style.display = isOffer ? "block" : "none";
-    document.getElementById("offerDetailsFields").style.display = isOffer ? "block" : "none";
-
-    // Adjust labels/placeholders
+// Adjust labels/placeholders
     const msgLabelText = document.getElementById("messageLabelText");
     const msg = document.getElementById("message");
     if (isOffer) {
@@ -703,11 +731,18 @@
     setStatus("", "");
     document.getElementById("submitBtn").disabled = false;
     document.getElementById('modal').classList.add('active');
+    // ensure the form starts from the top (title visible)
+    try {
+      const m = document.getElementById('modal');
+      if (m) m.scrollTop = 0;
+      const mc = m ? m.querySelector('.modal-content') : null;
+      if (mc) mc.scrollTop = 0;
+    } catch (e) {}
   }
   function resetFormFields() {
     const idsToClear = [
       'fio', 'phone', 'email', 'message',
-      'needAmount', 'offerDetails'
+      'needAmount'
     ];
     idsToClear.forEach((id) => {
       const el = document.getElementById(id);
@@ -845,7 +880,6 @@
     const message = document.getElementById("message").value.trim();
     const needAmount = (document.getElementById("needAmount")?.value || "").trim();
     const offerType = (document.getElementById("offerType")?.value || "").trim();
-    const offerDetails = (document.getElementById("offerDetails")?.value || "").trim();
     const consent_pd = document.getElementById("consentPd").checked;
     const consent_msg = document.getElementById("consentMsg").checked;
     if (!consent_pd) {
@@ -897,7 +931,6 @@
         message,
         need_amount: needAmount,
         offer_type: offerType,
-        offer_details: offerDetails,
         consent_pd,
         consent_msg,
         captcha_token: tokenToUse
