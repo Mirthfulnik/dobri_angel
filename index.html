@@ -241,6 +241,17 @@
       user-select:none;
       line-height:1.35;
     }
+    /* required asterisk for checkbox labels (keeps it inline at the end) */
+    .checkbox .req{
+      color: var(--danger);
+      font-weight: 700;
+      font-size: 11px;
+      vertical-align: super;
+      line-height: 0;
+      margin-left: 4px;
+      display: inline-block;
+      white-space: nowrap;
+    }
     .checkbox input[type="checkbox"]{
       margin: 2px 0 0 0;
       width: 18px;
@@ -553,10 +564,10 @@
     </div>
 
     <div class="checkbox">
-      <label><input id="consentPd" type="checkbox"> Согласен(а) на обработку персональных данных</label>
+      <label><input id="consentPd" type="checkbox"> <span>Согласен(а) на обработку персональных данных<span class="req">*</span></span></label>
     </div>
     <div class="checkbox">
-      <label><input id="consentMsg" type="checkbox"> Согласен(а) получать сообщения по заявке</label>
+      <label><input id="consentMsg" type="checkbox"> <span>Согласен(а) получать сообщения по заявке<span class="req">*</span></span></label>
     </div>
 
     <div class="captcha-wrap">
@@ -639,9 +650,33 @@
     document.getElementById("submitBtn").disabled = false;
     document.getElementById('modal').classList.add('active');
   }
-function closeForm() {
+  function resetFormFields() {
+    const idsToClear = [
+      'fio', 'phone', 'email', 'message',
+      'needAmount', 'offerDetails'
+    ];
+    idsToClear.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+
+    const offerTypeEl = document.getElementById('offerType');
+    if (offerTypeEl) offerTypeEl.value = '';
+
+    const consentPdEl = document.getElementById('consentPd');
+    if (consentPdEl) consentPdEl.checked = false;
+    const consentMsgEl = document.getElementById('consentMsg');
+    if (consentMsgEl) consentMsgEl.checked = false;
+
+    // reset per-open context
+    currentPostId = '';
+    currentFormType = 'help';
+  }
+
+  function closeForm() {
     document.getElementById('modal').classList.remove('active');
     setStatus("", "");
+    resetFormFields();
     captchaToken = "";
     window.__captchaToken = "";
     try {
