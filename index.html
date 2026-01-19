@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Добрый Ангел — благотворительный проект</title>
+
+  <meta name="description" content="Добрый Ангел — благотворительный проект помощи людям в сложной жизненной ситуации." />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Yandex SmartCaptcha (auto method) -->
+  <script>
+  // Must exist BEFORE captcha.js loads.
+  window.__captchaToken = "";
+
+  // SmartCaptcha callback from widget (data-callback="onCaptchaToken")
+  function onCaptchaToken(token) {
+    window.__captchaToken = (token || "").trim();
+    // clear status on successful token
+    try {
+      const st = document.getElementById("status");
+      if (st) { st.className = "status"; st.textContent = ""; }
+    } catch (e) {}
+  }
+  window.onCaptchaToken = onCaptchaToken;
+</script>
+  <script src="https://smartcaptcha.cloud.yandex.ru/captcha.js" async defer></script>
+
+  <style>
+    :root {
+      --bg-main: #f7f9fb;
+      --bg-white: #ffffff;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --accent: #f59e0b;
+      --border: #e5e7eb;
+      --radius: 14px;
+      --danger: #ef4444;
+      --ok: #10b981;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 20px;
+      white-space: nowrap;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-left: auto;
+    }
+    .nav-links a {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .nav-links a:hover { color: var(--text-main); text-decoration: none; }
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      background: var(--accent);
+      color: #111827;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .burger {
+      display: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-white);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+    .burger .lines { width: 18px; height: 12px; position: relative; }
+    .burger .lines span {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: var(--text-main);
+      border-radius: 2px;
+    }
+    .burger .lines span:nth-child(1) { top: 0; }
+    .burger .lines span:nth-child(2) { top: 5px; }
+    .burger .lines span:nth-child(3) { top: 10px; }
+
+    .mobile-menu { display: none; border-top: 1px solid var(--border); background: var(--bg-white); }
+    .mobile-menu.open { display: block; }
+    .mobile-menu .menu-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 16px 18px;
+      display: grid;
+      gap: 10px;
+    }
+    .mobile-menu a {
+      padding: 10px 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--text-main);
+      background: #fff;
+      text-decoration: none;
+    }
+    .mobile-menu a:hover { text-decoration: none; }
+    .mobile-menu .header-cta { width: 100%; padding: 12px 14px; border-radius: 12px; font-size: 14px; }
+
+    .section { margin-top: 64px; }
+    h1 { font-size: 36px; margin-bottom: 16px; }
+    h2 { font-size: 28px; margin-bottom: 16px; }
+    p { color: var(--text-muted); max-width: 760px; }
+
+    .button {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 14px 24px;
+      background: var(--accent);
+      color: #111827;
+      border-radius: var(--radius);
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+    .button.secondary { background: #e5e7eb; color: #111827; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .card {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+    .card img { width: 100%; border-radius: 10px; margin-bottom: 12px; }
+    .card h3 { margin: 8px 0; font-size: 18px; }
+    .card p { font-size: 14px; }
+
+    footer {
+      margin-top: 80px;
+      padding: 40px 16px;
+      background: var(--bg-white);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .footer-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; }
+    .footer-links a:hover { color: var(--text-main); text-decoration: none; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      padding: 16px;
+    }
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 22px;
+      max-width: 440px;
+      width: 100%;
+      border: 1px solid var(--border);
+    }
+    .modal-content h3 { margin-top: 0; }
+    .modal-content label { font-size: 12px; color: var(--text-muted); display:block; margin: 0 0 6px; }
+    .modal-content input,
+    .modal-content textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .checkbox { font-size: 13px; margin-bottom: 10px; color: var(--text-muted); }
+    .checkbox label{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      cursor:pointer;
+      user-select:none;
+      line-height:1.35;
+    }
+    .checkbox input[type="checkbox"]{
+      margin: 2px 0 0 0;
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      accent-color: var(--accent);
+    }
+    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .status { margin-top: 10px; font-size: 13px; }
+    .status.err { color: var(--danger); }
+    .status.ok { color: var(--ok); }
+
+    .captcha-wrap { margin: 10px 0 6px; }
+
+    @media (max-width: 768px) {
+      .container { padding: 16px 14px; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      .nav-links { display: none; }
+      .header-cta.desktop-only { display: none; }
+      .burger { display: inline-flex; }
+    }
+
+
+/* === Center section titles === */
+.section h2 { text-align: center; }
+
+/* === Posts grid: 1 column on mobile (as-is), 3 fixed cards on desktop === */
+#posts.cards { justify-content: center; }
+@media (min-width: 1100px) {
+  #posts.cards {
+    grid-template-columns: repeat(3, 340px);
+    justify-content: center;
+  }
+  #posts .card {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+  }
+  #posts .card img {
+    width: 100%;
+    height: 48%;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  #posts .card p {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  #posts .card .button { margin-top: auto; }
+}
+
+/* === Modal: correct sizing on desktop & mobile === */
+.modal{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  z-index: 20;
+  padding: 16px 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  align-items: flex-start;
+  justify-content: center;
+}
+.modal.active { display: flex; }
+
+.modal-content{
+  background: var(--bg-white);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  width: min(860px, calc(100vw - 24px));
+  margin: 24px auto;
+  padding: 22px;
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Desktop: wider + compact, still safe with height */
+@media (min-width: 992px){
+  .modal { padding: 28px; align-items: center; }
+  .modal-content{
+    width: min(920px, calc(100vw - 80px));
+    max-height: calc(100dvh - 80px);
+  }
+  .modal-content label{ margin: 0 0 5px; }
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select{
+    margin-bottom: 10px;
+    padding: 10px 12px;
+  }
+  .captcha-wrap{ margin: 8px 0 6px; }
+}
+
+/* Safe-area support */
+@supports (padding: env(safe-area-inset-top)) {
+  .modal{
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+  .modal-content{
+    max-height: calc(100dvh - max(48px, env(safe-area-inset-top) + env(safe-area-inset-bottom) + 32px));
+  }
+}
+
+/* === Checkbox rows: icon strictly near text, no layout breaks === */
+.checkbox{ font-size: 13px; margin: 10px 0; color: var(--text-muted); }
+.checkbox label{
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1.35;
+}
+.checkbox input[type="checkbox"]{
+  margin: 2px 0 0 0;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  accent-color: var(--accent);
+}
+.checkbox .checkbox-text{
+  display: inline-block;
+  position: relative;
+}
+.checkbox label.required .checkbox-text::after{
+  content: " *";
+  color: var(--danger);
+  font-weight: 600;
+  font-size: 0.9em;
+  vertical-align: super;
+}
+
+/* === Action bar: neat rectangle with rounded corners; buttons grouped left === */
+.modal-actions{
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 -10px 20px rgba(0,0,0,0.04);
+
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
+}
+.modal-actions .button{ margin: 0; }
+@media (min-width: 992px){
+  .modal-actions{ padding-left: 18px; }
+}
+
+/* Alias buttons for thankyou modal */
+.btn{
+  display: inline-block;
+  padding: 14px 24px;
+  background: var(--accent);
+  color: #111827;
+  border-radius: var(--radius);
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+.btn.btn-secondary{ background: #e5e7eb; color: #111827; }
+.icon-btn{
+  width: 40px; height: 40px;
+  display:flex; align-items:center; justify-content:center;
+  border: 1px solid var(--border);
+  background:#fff;
+  border-radius: 12px;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container header-inner">
+    <div class="logo">Добрый Ангел</div>
+
+    <nav class="nav-links" aria-label="Навигация">
+      <a href="#about">О проекте</a>
+      <a href="#help">Кому мы помогаем</a>
+      <a href="#today">Сегодня нужна помощь</a>
+      <a href="#done">Кому мы помогли</a>
+    </nav>
+
+    <button class="header-cta desktop-only" type="button" onclick="openForm('help')">
+      Оставить заявку на помощь
+    </button>
+
+    <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMobileMenu()">
+      <span class="lines" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="menu-inner">
+      <button class="header-cta" type="button" onclick="openForm('help'); closeMobileMenu();">
+        Оставить заявку на помощь
+      </button>
+      <a href="#about" onclick="closeMobileMenu()">О проекте</a>
+      <a href="#help" onclick="closeMobileMenu()">Кому мы помогаем</a>
+      <a href="#today" onclick="closeMobileMenu()">Сегодня нужна помощь</a>
+      <a href="#done" onclick="closeMobileMenu()">Кому мы помогли</a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="about" class="section">
+    <h1>Благотворительный проект «Добрый Ангел»</h1>
+    <p>
+      «Добрый Ангел» — это проект помощи людям, оказавшимся в сложной жизненной ситуации.
+      Мы принимаем обращения, проверяем запросы и стараемся оперативно находить поддержку.
+    </p>
+    <button class="button" type="button" onclick="openForm('help')">Оставить заявку на помощь</button>
+  </section>
+
+  <section id="help" class="section">
+    <h2>Кому мы помогаем</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Людям в трудной ситуации</h3>
+        <p>Поддержка в сложных жизненных обстоятельствах.</p>
+      </div>
+      <div class="card">
+        <h3>Семьям и детям</h3>
+        <p>Помощь семьям, которым сейчас особенно тяжело.</p>
+      </div>
+      <div class="card">
+        <h3>Экстренные случаи</h3>
+        <p>Срочные запросы, когда время имеет значение.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="today" class="section">
+    <h2>Сегодня нужна помощь</h2>
+    <div class="cards" id="posts">
+      <div class="card">
+        <h3>Загружаем…</h3>
+        <p>Подтягиваем актуальные запросы помощи.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="done" class="section">
+    <h2>Кому мы помогли</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Семья N</h3>
+        <p>Помощь оказана, запрос закрыт.</p>
+      </div>
+      <div class="card">
+        <h3>Подопечный №2</h3>
+        <p>Была оказана поддержка в трудный момент.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-links" aria-label="Социальные сети">
+    <a href="#" target="_blank" rel="noopener">Telegram</a>
+    <span aria-hidden="true">|</span>
+    <a href="#" target="_blank" rel="noopener">MAX</a>
+    <span aria-hidden="true">|</span>
+    <a href="#" target="_blank" rel="noopener">ВКонтакте</a>
+    <span aria-hidden="true">|</span>
+    <a href="#" target="_blank" rel="noopener">RuTube</a>
+  </div>
+
+  <div>© Добрый Ангел, 2026</div>
+  <div style="margin-top:10px;">
+    <a href="#">Политика конфиденциальности</a>
+  </div>
+</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <h3 id="modalTitle">Обращение</h3>
+
+    <label for="fio">ФИО <span style="color:var(--danger)">*</span></label>
+    <input id="fio" type="text" placeholder="Иванов Иван Иванович" autocomplete="name">
+
+    <label for="phone">Телефон <span style="color:var(--danger)">*</span></label>
+    <input id="phone" type="tel" placeholder="+7…" autocomplete="tel">
+
+    <label for="email">Email <span style="color:var(--text-muted);font-weight:400">(опционально)</span></label>
+    <input id="email" type="email" placeholder="name@example.com" autocomplete="email">
+
+    <label for="message" id="messageLabel">Сообщение</label>
+    <textarea id="message" rows="4" placeholder="Опишите ситуацию / чем помочь"></textarea>
+
+    <!-- Extra fields: shown depending on form type -->
+    <div id="helpFields" style="display:none;">
+      <label for="needAmount">Сумма в рублях <span style="color:var(--text-muted);font-weight:400">(опционально)</span></label>
+      <input id="needAmount" type="text" inputmode="numeric" placeholder="Например: 25 000 ₽ (необязательно)">
+    </div>
+
+    <div id="offerFields" style="display:none;">
+      <label for="offerType">Чем вы готовы помочь</label>
+      <select id="offerType" style="width:100%;padding:10px;margin-bottom:12px;border-radius:10px;border:1px solid var(--border);font-family:inherit;font-size:14px;background:#fff;">
+        <option value="">Выберите вариант</option>
+        <option value="money">Финансово</option>
+        <option value="things">Вещами</option>
+        <option value="services">Услугами / экспертизой</option>
+        <option value="volunteer">Волонтёрством</option>
+        <option value="other">Другое</option>
+      </select>
+
+      <label for="offerDetails">Детали (опционально)</label>
+      <input id="offerDetails" type="text" placeholder="Например: готов помочь с покупкой лекарств / доставкой / консультацией">
+    </div>
+
+    <div class="checkbox">
+      <label class="required"><input id="consentPd" type="checkbox"> <span class="checkbox-text">Согласен(а) на обработку персональных данных</span></label>
+    </div>
+    <div class="checkbox">
+      <label class="required"><input id="consentMsg" type="checkbox"> <span class="checkbox-text">Согласен(а) получать сообщения по заявке</span></label>
+    </div>
+
+    <div class="captcha-wrap">
+      <div
+        id="captcha-container"
+        class="smart-captcha"
+        data-sitekey="ysc1_3kDwCVHsV58wgA8wXdwv7naACSsR6hez9vk1OuzHa4b54514"
+        data-hl="ru"
+        data-callback="onCaptchaToken"
+      ></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="button" id="submitBtn" type="button" onclick="submitForm()">Отправить</button>
+      <button class="button secondary" type="button" onclick="closeForm()">Закрыть</button>
+    </div>
+
+    <div class="status" id="status"></div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = "https://d5dq8h2e1bq0n33astd3.4b4k4pg5.apigw.yandexcloud.net";
+
+  let currentFormType = "help";
+  let currentPostId = "";
+  let captchaToken = "";
+
+  function showThankYou(){
+    const ty = document.getElementById('thankyou');
+    if (!ty) return;
+    ty.classList.add('active');
+    ty.setAttribute('aria-hidden','false');
+  }
+  function closeThankYou(){
+    const ty = document.getElementById('thankyou');
+    if (!ty) return;
+    ty.classList.remove('active');
+    ty.setAttribute('aria-hidden','true');
+  }
+
+  function setStatus(text, kind) {
+    const el = document.getElementById("status");
+    el.className = "status" + (kind ? (" " + kind) : "");
+    el.textContent = text || "";
+  }
+
+  function onCaptchaToken(token) {
+    captchaToken = token || "";
+    if (captchaToken) setStatus("", "");
+  }
+  window.onCaptchaToken = onCaptchaToken;
+
+  function openForm(type, postId) {
+    currentFormType = type || "help";
+    currentPostId = postId || "";
+
+    const isOffer = (currentFormType === "donate"); // "donate" == offer to help
+    document.getElementById("modalTitle").textContent = isOffer ? "Хочу помочь" : "Заявка на помощь";
+
+    // Toggle fieldsets
+    document.getElementById("helpFields").style.display = isOffer ? "none" : "block";
+    document.getElementById("offerFields").style.display = isOffer ? "block" : "none";
+
+    // Adjust labels/placeholders
+    const msgLabel = document.getElementById("messageLabel");
+    const msg = document.getElementById("message");
+    if (isOffer) {
+      msgLabel.textContent = "Сообщение (как именно хотите помочь)";
+      msg.placeholder = "Например: готов помочь финансово / волонтёрством / вещами…";
+    } else {
+      msgLabel.textContent = "Сообщение (опишите ситуацию)";
+      msg.placeholder = "Опишите ситуацию / чем помочь";
+    }
+    // Desktop: reduce textarea height so the whole form fits on screen without inner scroll
+    try { msg.rows = (window.innerWidth >= 992) ? 3 : 4; } catch(e) {}
+
+
+    setStatus("", "");
+    document.getElementById("submitBtn").disabled = false;
+    document.getElementById('modal').classList.add('active');
+  }
+function closeForm() {
+    document.getElementById('modal').classList.remove('active');
+    setStatus("", "");
+    captchaToken = "";
+    window.__captchaToken = "";
+    try {
+      if (window.smartCaptcha && window.smartCaptcha.reset) window.smartCaptcha.reset();
+    } catch (e) {}
+  }
+
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    const btn = document.querySelector('.burger');
+    const isOpen = menu.classList.toggle('open');
+    if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+
+  function closeMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    const btn = document.querySelector('.burger');
+    if (menu.classList.contains('open')) {
+      menu.classList.remove('open');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) closeMobileMenu();
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeForm();
+      closeMobileMenu();
+    }
+  });
+
+  document.getElementById('modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeForm();
+  });
+
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function formatAmount(amount, currency) {
+    if (amount === null || amount === undefined || amount === "") return "";
+    try {
+      const cur = currency || "₽";
+      return new Intl.NumberFormat("ru-RU").format(Number(amount)) + " " + cur;
+    } catch {
+      return String(amount) + " " + (currency || "");
+    }
+  }
+
+  async function loadPosts() {
+    const wrap = document.getElementById("posts");
+    if (!wrap) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/posts`, { method: "GET" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const items = Array.isArray(data.items) ? data.items : [];
+
+      if (items.length === 0) {
+        wrap.innerHTML = `
+          <div class="card">
+            <h3>Пока нет активных запросов</h3>
+            <p>Если вам нужна помощь — нажмите «Оставить заявку на помощь».</p>
+            <button class="button" type="button" onclick="openForm('help')">Оставить заявку на помощь</button>
+          </div>
+        `;
+        return;
+      }
+
+      wrap.innerHTML = items.map((p) => {
+        const id = escapeHtml(p.id || "");
+        const title = escapeHtml(p.title || "Нужна помощь");
+        const text = escapeHtml(p.text || "");
+        const img = escapeHtml(p.image_url || "");
+        const amount = formatAmount(p.amount, (p.currency === "RUB" || !p.currency) ? "₽" : p.currency);
+        const amountHtml = amount ? `<p><b>Нужно:</b> ${escapeHtml(amount)}</p>` : "";
+
+        return `
+          <div class="card" data-post-id="${id}">
+            ${img ? `<img src="${img}" alt="${title}" loading="lazy">` : ""}
+            <h3>${title}</h3>
+            <p>${text}</p>
+            ${amountHtml}
+            <button class="button" type="button" onclick="openForm('donate','${id}')">Хочу помочь</button>
+          </div>
+        `;
+      }).join("");
+    } catch (e) {
+      wrap.innerHTML = `
+        <div class="card">
+          <h3>Не удалось загрузить запросы</h3>
+          <p>Попробуйте обновить страницу.</p>
+        </div>
+      `;
+      console.error(e);
+    }
+  }
+
+  async function submitForm() {
+    const fio = document.getElementById("fio").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const message = document.getElementById("message").value.trim();
+    const needAmount = (document.getElementById("needAmount")?.value || "").trim();
+    const offerType = (document.getElementById("offerType")?.value || "").trim();
+    const offerDetails = (document.getElementById("offerDetails")?.value || "").trim();
+    const consent_pd = document.getElementById("consentPd").checked;
+    const consent_msg = document.getElementById("consentMsg").checked;
+
+    if (!consent_pd) {
+      setStatus("Нужно согласие на обработку персональных данных.", "err");
+      return;
+    }
+    if (!consent_msg) {
+      setStatus("Нужно согласие получать сообщения по заявке.", "err");
+      return;
+    }
+    if (!fio) {
+      setStatus("Укажите ФИО.", "err");
+      return;
+    }
+    if (!phone) {
+      setStatus("Укажите телефон.", "err");
+      return;
+    }
+    // Email — опционально
+    if (!message) {
+      setStatus("Заполните сообщение.", "err");
+      return;
+    }
+    const isOffer = (currentFormType === "donate");
+    if (isOffer && !offerType) {
+      setStatus("Выберите, чем вы готовы помочь.", "err");
+      return;
+    }
+
+    // Token can arrive via callback OR be written into a hidden input inside the widget container.
+    const domTokenEl = document.querySelector('#captcha-container input[name="smart-token"]');
+    const domToken = domTokenEl ? (domTokenEl.value || "").trim() : "";
+    const tokenToUse = (window.__captchaToken || captchaToken || domToken || '').trim();
+
+    if (!tokenToUse) {
+      setStatus("Пожалуйста, пройдите проверку SmartCaptcha.", "err");
+      return;
+    }
+
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    setStatus("Отправляем…", "");
+
+    try {
+      const payload = {
+        type: currentFormType,
+        kind: (currentFormType === "donate") ? "help_offer" : "help_request",
+        post_id: currentPostId,
+        fio,
+        phone,
+        email,
+        message,
+        need_amount: needAmount,
+        offer_type: offerType,
+        offer_details: offerDetails,
+        consent_pd,
+        consent_msg,
+        captcha_token: tokenToUse
+      };
+
+      const res = await fetch(`${API_BASE}/api/form/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
+
+      setStatus("Готово! Заявка отправлена.", "ok");
+
+      // Close form and show thank-you message
+      closeForm();
+      showThankYou();
+    } catch (e) {
+      console.error(e);
+      setStatus("Не удалось отправить. Попробуйте ещё раз.", "err");
+      btn.disabled = false;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", loadPosts);
+
+</script>
+
+
+  <!-- Thank you modal -->
+  <div id="thankyou" class="modal" aria-hidden="true">
+    <div class="modal-content" style="max-width:520px;">
+      <div class="modal-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="margin:0;">Спасибо!</h3>
+        <button class="icon-btn" onclick="closeThankYou()" aria-label="Закрыть">✕</button>
+      </div>
+      <p style="margin:12px 0 0;color:var(--text-muted);line-height:1.5;">
+        Спасибо за обращение, скоро мы с Вами свяжемся.
+      </p>
+      <div class="modal-actions" style="margin-top:18px;">
+        <button class="btn btn-secondary" type="button" onclick="closeThankYou()">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
