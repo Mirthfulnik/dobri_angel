@@ -487,6 +487,12 @@
 .captcha-box .smart-captcha{
   max-width: 100%;
 }
+.post-id {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: -6px;
+  margin-bottom: 6px;
+}
 </style>
 </head>
 
@@ -889,14 +895,15 @@
         const amountHtml = amount ? `<p><b>Нужно:</b> ${escapeHtml(amount)}</p>` : "";
 
         return `
-          <div class="card" data-post-id="${id}">
-            ${img ? `<img src="${img}" alt="${title}" loading="lazy">` : ""}
-            <h3>${title}</h3>
-            <p>${text}</p>
-            ${amountHtml}
-            <button class="button" type="button" onclick="openForm('donate','${id}')">Хочу помочь</button>
-          </div>
-        `;
+        <div class="card" data-post-id="${id}">
+          ${img ? `<img src="${img}" alt="${title}" loading="lazy">` : ""}
+      <h3>${title}</h3>
+      <div class="post-id">ID: ${id}</div>
+      <p>${text}</p>
+      ${amountHtml}
+      <button class="button" type="button" onclick="openForm('donate','${id}')">Хочу помочь</button>
+    </div>
+  `;
       }).join("");
     } catch (e) {
       wrap.innerHTML = `
