@@ -338,14 +338,12 @@
 }
 
 .modal-actions{
-  position: sticky;
-  bottom: 0;
+  /* Action bar lives INSIDE modal frame (no sticky to avoid overflow artifacts) */
   background: #fff;
   padding: 12px 14px;
   margin-top: 14px;
   border: 1px solid var(--border);
   border-radius: 14px;
-  box-shadow: none;
 
   display: flex;
   align-items: center;
@@ -422,7 +420,8 @@
   .modal-content {
     width: min(860px, calc(100vw - 64px));
     max-height: calc(100dvh - 64px);
-    overflow: visible; /* avoid inner scroll on desktop */
+    overflow: auto; /* keep everything inside the rounded frame */
+    -webkit-overflow-scrolling: touch;
   }
   /* make fields more compact on desktop */
   .modal-content input,
@@ -434,6 +433,25 @@
   .captcha-wrap { margin: 8px 0 4px; }
 }
 
+
+
+.req-note{
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.captcha-box{
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px;
+  background: #fff;
+  max-width: 100%;
+  overflow: hidden;
+}
+.captcha-box .smart-captcha{
+  max-width: 100%;
+}
 </style>
 </head>
 
@@ -550,19 +568,19 @@
   <div class="modal-content">
     <h3 id="modalTitle">Обращение</h3>
 
-    <label for="fio">ФИО</label>
-    <input id="fio" type="text" placeholder="Иванов Иван Иванович" autocomplete="name">
+    <label for="fio">ФИО<span class="req">*</span></label>
+    <input id="fio" type="text" placeholder="Иванов Иван Иванович" autocomplete="name" required>
 
-    <label for="phone">Телефон</label>
-    <input id="phone" type="tel" placeholder="+7…" autocomplete="tel">
+    <label for="phone">Телефон<span class="req">*</span></label>
+    <input id="phone" type="tel" placeholder="+7…" autocomplete="tel" required>
 
     <label for="email">Email</label>
     <input id="email" type="email" placeholder="name@example.com" autocomplete="email">
 
     <!-- Offer fields (shown depending on form type) -->
     <div id="offerTypeFields" style="display:none;">
-      <label for="offerType">Чем вы готовы помочь</label>
-      <select id="offerType" style="width:100%;padding:10px;margin-bottom:12px;border-radius:10px;border:1px solid var(--border);font-family:inherit;font-size:14px;background:#fff;">
+      <label for="offerType">Чем вы готовы помочь<span class="req">*</span></label>
+      <select id="offerType" required style="width:100%;padding:10px;margin-bottom:12px;border-radius:10px;border:1px solid var(--border);font-family:inherit;font-size:14px;background:#fff;">
         <option value="">Выберите вариант</option>
         <option value="money">Финансово</option>
         <option value="things">Вещами</option>
@@ -573,8 +591,8 @@
     </div>
 
     <div id="messageBlock">
-      <label for="message" id="messageLabel">Сообщение</label>
-      <textarea id="message" rows="4" placeholder="Опишите ситуацию / чем помочь"></textarea>
+      <label for="message" id="messageLabel"><span id="messageLabelText">Сообщение</span><span class="req">*</span></label>
+      <textarea id="message" required rows="4" placeholder="Опишите ситуацию / чем помочь"></textarea>
     </div>
 
     <div id="offerDetailsFields" style="display:none;">
@@ -596,19 +614,23 @@
     </div>
 
     <div class="captcha-wrap">
-      <div
+      <div class="captcha-box">
+        <div
         id="captcha-container"
         class="smart-captcha"
         data-sitekey="ysc1_3kDwCVHsV58wgA8wXdwv7naACSsR6hez9vk1OuzHa4b54514"
         data-hl="ru"
         data-callback="onCaptchaToken"
       ></div>
+      </div>
     </div>
 
     <div class="modal-actions">
       <button class="button" id="submitBtn" type="button" onclick="submitForm()">Отправить</button>
       <button class="button secondary" type="button" onclick="closeForm()">Закрыть</button>
     </div>
+
+    <div class="req-note"><span class="req">*</span> — обязательные поля</div>
 
     <div class="status" id="status"></div>
   </div>
@@ -665,13 +687,13 @@
     document.getElementById("offerDetailsFields").style.display = isOffer ? "block" : "none";
 
     // Adjust labels/placeholders
-    const msgLabel = document.getElementById("messageLabel");
+    const msgLabelText = document.getElementById("messageLabelText");
     const msg = document.getElementById("message");
     if (isOffer) {
-      msgLabel.textContent = "Сообщение (как именно хотите помочь)";
+      if (msgLabelText) msgLabelText.textContent = "Сообщение (как именно хотите помочь)";
       msg.placeholder = "Например: готов помочь финансово / волонтёрством / вещами…";
     } else {
-      msgLabel.textContent = "Сообщение (опишите ситуацию)";
+      if (msgLabelText) msgLabelText.textContent = "Сообщение (опишите ситуацию)";
       msg.placeholder = "Опишите ситуацию / чем помочь";
     }
     // Desktop: reduce textarea height so the whole form fits on screen without inner scroll
@@ -927,4 +949,4 @@
   </div>
 
 </body>
-</html> 
+</html>
