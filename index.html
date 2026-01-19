@@ -259,7 +259,19 @@
       flex: 0 0 18px;
       accent-color: var(--accent);
     }
-    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+    }
     .status { margin-top: 10px; font-size: 13px; }
     .status.err { color: var(--danger); }
     .status.ok { color: var(--ok); }
@@ -329,9 +341,17 @@
   position: sticky;
   bottom: 0;
   background: #fff;
-  padding-top: 10px;
-  margin-top: 10px;
-  box-shadow: 0 -10px 20px rgba(0,0,0,0.04);
+  padding: 12px 14px;
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 /* === Posts grid: centered & square cards on desktop === */
@@ -539,16 +559,8 @@
     <label for="email">Email</label>
     <input id="email" type="email" placeholder="name@example.com" autocomplete="email">
 
-    <label for="message" id="messageLabel">Сообщение</label>
-    <textarea id="message" rows="4" placeholder="Опишите ситуацию / чем помочь"></textarea>
-
-    <!-- Extra fields: shown depending on form type -->
-    <div id="helpFields" style="display:none;">
-      <label for="needAmount">Сумма (если известна)</label>
-      <input id="needAmount" type="text" inputmode="numeric" placeholder="Например: 25 000 ₽ (необязательно)">
-    </div>
-
-    <div id="offerFields" style="display:none;">
+    <!-- Offer fields (shown depending on form type) -->
+    <div id="offerTypeFields" style="display:none;">
       <label for="offerType">Чем вы готовы помочь</label>
       <select id="offerType" style="width:100%;padding:10px;margin-bottom:12px;border-radius:10px;border:1px solid var(--border);font-family:inherit;font-size:14px;background:#fff;">
         <option value="">Выберите вариант</option>
@@ -558,9 +570,22 @@
         <option value="volunteer">Волонтёрством</option>
         <option value="other">Другое</option>
       </select>
+    </div>
 
+    <div id="messageBlock">
+      <label for="message" id="messageLabel">Сообщение</label>
+      <textarea id="message" rows="4" placeholder="Опишите ситуацию / чем помочь"></textarea>
+    </div>
+
+    <div id="offerDetailsFields" style="display:none;">
       <label for="offerDetails">Детали (опционально)</label>
       <input id="offerDetails" type="text" placeholder="Например: готов помочь с покупкой лекарств / доставкой / консультацией">
+    </div>
+
+    <!-- Help request fields (shown depending on form type) -->
+    <div id="helpFields" style="display:none;">
+      <label for="needAmount">Сумма (если известна)</label>
+      <input id="needAmount" type="text" inputmode="numeric" placeholder="Например: 25 000 ₽ (необязательно)">
     </div>
 
     <div class="checkbox">
@@ -625,12 +650,19 @@
     currentFormType = type || "help";
     currentPostId = postId || "";
 
+    // Always start with a clean form (prevents mixing data between forms)
+    resetFormFields();
+    captchaToken = "";
+    window.__captchaToken = "";
+    try { if (window.smartCaptcha && window.smartCaptcha.reset) window.smartCaptcha.reset(); } catch (e) {}
+
     const isOffer = (currentFormType === "donate"); // "donate" == offer to help
     document.getElementById("modalTitle").textContent = isOffer ? "Хочу помочь" : "Заявка на помощь";
 
     // Toggle fieldsets
     document.getElementById("helpFields").style.display = isOffer ? "none" : "block";
-    document.getElementById("offerFields").style.display = isOffer ? "block" : "none";
+    document.getElementById("offerTypeFields").style.display = isOffer ? "block" : "none";
+    document.getElementById("offerDetailsFields").style.display = isOffer ? "block" : "none";
 
     // Adjust labels/placeholders
     const msgLabel = document.getElementById("messageLabel");
@@ -668,15 +700,15 @@
     const consentMsgEl = document.getElementById('consentMsg');
     if (consentMsgEl) consentMsgEl.checked = false;
 
-    // reset per-open context
-    currentPostId = '';
-    currentFormType = 'help';
   }
 
   function closeForm() {
     document.getElementById('modal').classList.remove('active');
     setStatus("", "");
     resetFormFields();
+    // reset per-open context
+    currentPostId = '';
+    currentFormType = 'help';
     captchaToken = "";
     window.__captchaToken = "";
     try {
@@ -794,13 +826,28 @@
     const offerDetails = (document.getElementById("offerDetails")?.value || "").trim();
     const consent_pd = document.getElementById("consentPd").checked;
     const consent_msg = document.getElementById("consentMsg").checked;
-
     if (!consent_pd) {
       setStatus("Нужно согласие на обработку персональных данных.", "err");
       return;
     }
-    if (!fio || (!phone && !email) || !message) {
-      setStatus("Заполните ФИО, сообщение и телефон или email.", "err");
+    if (!consent_msg) {
+      setStatus("Нужно согласие на получение сообщений по заявке.", "err");
+      return;
+    }
+    if (!fio) {
+      setStatus("Укажите ФИО.", "err");
+      return;
+    }
+    if (!phone) {
+      setStatus("Укажите телефон.", "err");
+      return;
+    }
+    if (!message) {
+      setStatus("Заполните сообщение.", "err");
+      return;
+    }
+    if (currentFormType === "donate" && !offerType) {
+      setStatus("Выберите, чем вы готовы помочь.", "err");
       return;
     }
     // Token can arrive via callback OR be written into a hidden input inside the widget container.
